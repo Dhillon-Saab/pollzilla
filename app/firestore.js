@@ -45,7 +45,7 @@ import {
     const q = query(itemsRef, where("Id", "==", fieldId));
 
     const itemRef1 = collection(db, `polls/`);
-    const q1 = query(itemsRef1, where("Id", "==", fieldId));
+    const q1 = query(itemRef1, where("Id", "==", fieldId));
 
 
     try {
