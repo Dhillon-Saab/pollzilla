@@ -1,4 +1,5 @@
 // Directive for Next.js to only run this code on the client-side.
+"use client";
 
 // Importing necessary hooks from React for managing state and effects,
 // and context for providing a way to pass data through the component tree.
@@ -13,7 +14,7 @@ import {
   GithubAuthProvider,
 } from "firebase/auth";
 // Import the authenticated Firebase instance from the local firebase module.
-import { auth } from "./firebase";
+import { auth } from "@/app/firebase";
 
 // Create a new React context for authentication; it's a construct that allows us to pass data deeply throughout the component tree.
 const AuthContext = createContext();
