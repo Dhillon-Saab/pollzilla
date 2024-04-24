@@ -31,7 +31,7 @@ import {
       option2: poll.option2,
       EndTime: poll.EndTime
     });
-    const docRef1 = await addDoc(collection(db, `polls`), {
+    const docRef1 = await addDoc(collection(db, `polls/`), {
       Id: poll.Id,
       question: poll.question,
       option1: poll.option1,
@@ -44,7 +44,7 @@ import {
     const itemsRef = collection(db, `users/${userId}/polls`);
     const q = query(itemsRef, where("Id", "==", fieldId));
 
-    const itemRef1 = collection(db, `polls`);
+    const itemRef1 = collection(db, `polls/`);
     const q1 = query(itemsRef1, where("Id", "==", fieldId));
 
 
