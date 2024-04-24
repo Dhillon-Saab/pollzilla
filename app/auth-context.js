@@ -1,5 +1,4 @@
 // Directive for Next.js to only run this code on the client-side.
-"use client";
 
 // Importing necessary hooks from React for managing state and effects,
 // and context for providing a way to pass data through the component tree.
