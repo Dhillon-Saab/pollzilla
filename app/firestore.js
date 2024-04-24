@@ -59,7 +59,7 @@ import {
       } else {
         console.log("No document matches the specified id.");
       }
-      const querySnap = await getDoc(q1);
+      const querySnap = await getDocs(q1);
       if(!querySnap.empty){
         querySnap.forEach(async (doc1) => {
           await deleteDoc(doc1.ref)
