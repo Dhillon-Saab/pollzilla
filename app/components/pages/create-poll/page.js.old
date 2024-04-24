@@ -1,0 +1,160 @@
+// pages/create-poll.js
+/** @jsxImportSource react */
+'use client';
+
+import React, { useState, useEffect, useDebugValue } from 'react';
+import Link from 'next/link';
+import { useUserAuth } from '@/app/auth-context';
+import { addPoll } from '@/app/firestore';
+
+const CreatePoll = () => {
+
+  const { user } = useUserAuth();
+  const [poll, setPoll] = useState({
+    question: '',
+    options: [{ id: 1, text: '' }] // Start with one empty option
+  });
+  const [adding, setAdding] = useState(false);
+
+  const [question, setQuestion] = useState('');
+  const [options, setOptions] = useState(['', '']);
+  const [endDate, setEndDate] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [minDate, setMinDate] = useState('');
+  const [minTime, setMinTime] = useState('');
+
+  useEffect(() => {
+    const today = new Date();
+    const date = today.toISOString().split('T')[0]; // format: 'YYYY-MM-DD'
+    const time = today.toTimeString().split(' ')[0]; // format: 'hh:mm:ss'
+    setMinDate(date);
+    setMinTime(time);
+  }, []);
+
+  const handleQuestionChange = (e) => {
+    setPoll({
+      ...poll,
+      question: e.target.value
+    });
+
+  };
+
+  const handleOptionChange = (index, text) => {
+    const newOptions = [...poll.options];
+    newOptions[index] = { ...newOptions[index], text };
+    setPoll({
+      ...poll,
+      options: newOptions
+    });
+  };
+
+  const addOption = () => {
+    setPoll({
+      ...poll,
+      options: [...poll.options, { id: Date.now(), text: '' }] // Using current timestamp as a unique id
+    });
+  };
+
+  const removeOption = (id) => {
+    setPoll({
+      ...poll,
+      options: poll.options.filter(option => option.id !== id)
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const newPoll = {
+      Id: Math.random(10,99).toString(),
+      Question: poll.question,
+      Options: poll.options.map(option => ({ OptionText: option.text })),
+      EndDate: endDate,
+      EndTime: endTime
+      
+  };
+
+  console.log(newPoll); 
+
+  addPoll(user.uid, newPoll)
+
+    // Here you would typically handle the form submission to the server
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-peach text-black font-chocolate">
+      <h1 className="text-4xl font-bold font-chocolate mb-6">Create a New Poll</h1>
+      <form onSubmit={handleSubmit} className="w-full max-w-lg p-5 bg-white rounded-lg shadow-lg flex flex-col items-center">
+        <div className="w-full mb-4">
+          <label htmlFor="question" className="block text-lg font-medium mb-2">Question</label>
+          <input
+            type="text"
+            id="question"
+            value={poll.question}
+            onChange={handleQuestionChange}
+            placeholder='Enter The poll question'
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div className="w-full mb-4">
+          <label className="block text-lg font-medium mb-2">Options</label>
+          {poll.options.map((option, index) => (
+            <div key={option.id}>
+              <input
+                required
+                key={option.id}
+                type="text"
+                value={option.text}
+                onChange={(e) => handleOptionChange(index, e.target.value)}
+                placeholder={`Option ${index + 1}`}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 mb-2"
+              />
+ <button className='py-2 px-4 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75' onClick={() => removeOption(option.id)}>Remove</button>
+          
+          </div>
+          ))}
+          <div className="flex justify-center space-x-4 mb-4">
+            <button type="button" onClick={addOption} className="py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+              Add Option
+            </button>
+
+          </div>
+        </div>
+        <div className="w-full mb-4">
+          <label htmlFor="endDate" className="block text-lg font-medium mb-2">End Date</label>
+          <input
+            required
+            type="date"
+            id="endDate"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            min={minDate}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div className="w-full mb-4">
+          <label htmlFor="endTime" className="block text-lg font-medium mb-2">End Time</label>
+          <input
+            required
+            type="time"
+            id="endTime"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            min={endDate === minDate ? minTime : ''}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <button type="submit" className="py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
+          Create Poll
+        </button>
+      </form>
+      <a href='/' className="mt-4 text-lg bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300 ease-in-out shadow-lg">
+        Go back to Home
+      </a>
+
+    </div>
+  );
+};
+
+export default CreatePoll;
